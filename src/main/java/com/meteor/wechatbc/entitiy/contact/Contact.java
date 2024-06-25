@@ -1,5 +1,6 @@
 package com.meteor.wechatbc.entitiy.contact;
 
+import cn.hutool.core.collection.CollStreamUtil;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.meteor.wechatbc.entitiy.message.SentMessage;
 import com.meteor.wechatbc.impl.HttpAPI;
@@ -10,6 +11,8 @@ import lombok.ToString;
 import java.io.File;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Data
 @ToString
@@ -36,7 +39,7 @@ public class Contact implements Serializable {
     private long memberCount;
 
     @JSONField(name="MemberList")
-    private List<?> memberList;
+    private List<ContactMember> memberList;
 
     @JSONField(name="RemarkName")
     private String remarkName;
@@ -110,6 +113,8 @@ public class Contact implements Serializable {
     @JSONField(name="IsOwner")
     private long isOwner;
 
+    private Map<String, ContactMember> contactMemberMap;
+
     protected HttpAPI httpAPI(){
         return weChatClient.getWeChatCore().getHttpAPI();
     }
@@ -140,5 +145,51 @@ public class Contact implements Serializable {
      */
     public ContactType getContactType(){
         return ContactType.from(this);
+    }
+
+    public ContactMember findGroupMemberUser(String senderUserName) {
+        if (this.getMemberList() != null && !this.getMemberList().isEmpty() && contactMemberMap == null) {
+            contactMemberMap = CollStreamUtil.toIdentityMap(this.memberList, ContactMember::getUserName);
+        }
+        return contactMemberMap.get(senderUserName);
+    }
+
+    @Data
+    @ToString
+    public static class ContactMember {
+
+        @JSONField(name="Uin")
+        private long uin;
+
+        @JSONField(name="UserName")
+        private String userName;
+
+        @JSONField(name="NickName")
+        private String nickName;
+
+        @JSONField(name="AttrStatus")
+        private long attrStatus;
+
+        @JSONField(name="PYInitial")
+        private String pyInitial;
+
+        @JSONField(name="PYQuanPin")
+        private String pyQuanPin;
+
+        @JSONField(name="RemarkPYInitial")
+        private String remarkPYInitial;
+
+        @JSONField(name="RemarkPYQuanPin")
+        private String remarkPYQuanPin;
+
+        @JSONField(name="MemberStatus")
+        private Integer memberStatus;
+
+        @JSONField(name="DisplayName")
+        private String displayName;
+
+        @JSONField(name="KeyWord")
+        private String keyWord;
+
     }
 }

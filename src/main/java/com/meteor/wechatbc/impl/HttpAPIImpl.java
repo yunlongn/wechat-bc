@@ -158,8 +158,8 @@ public class HttpAPIImpl implements HttpAPI {
                 .addQueryParameter("rr",String.valueOf(System.currentTimeMillis()))
                 .build();
         Request request = BASE_REQUEST.newBuilder().url(httpUrl)
-                        .post(RequestBody.create(mediaType,JSONObject.toJSONString(new JSONObject())))
-                                .build();
+                .post(RequestBody.create(mediaType, JSONObject.toJSONString(new JSONObject())))
+                .build();
         try(
                 Response response = okHttpClient.newCall(request).execute();
         ) {

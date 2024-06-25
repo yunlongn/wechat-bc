@@ -9,6 +9,7 @@ import com.meteor.wechatbc.impl.command.CommandManager;
 import com.meteor.wechatbc.impl.event.Listener;
 import com.meteor.wechatbc.impl.event.sub.MessageEvent;
 import com.meteor.wechatbc.impl.event.sub.ReceiveMessageEvent;
+import com.meteor.wechatbc.impl.model.message.ImageMessage;
 import lombok.AllArgsConstructor;
 
 import java.util.Optional;
@@ -24,6 +25,15 @@ public class ContactCommandListener implements Listener {
     @EventHandler
     public void onReceiveMessage(MessageEvent messageEvent){
         Message message = messageEvent.getMessage();
+        if (messageEvent.getMessage() instanceof ImageMessage){
+            ImageMessage receiveMessageEvent = (ImageMessage) messageEvent.getMessage() ;
+            System.out.println(receiveMessageEvent.getContent());
+
+        }
+        if (message.getContent().equals("ding")) {
+            Contact contact = messageEvent.getEventManager().getWeChatClient().getContactManager().getContactGroupCache().get(message.getFromUserName());
+            contact.sendMessage("dong");
+        }
 
     }
 

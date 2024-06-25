@@ -89,13 +89,23 @@ public class SyncCheckRunnable {
 
             messageCache.put(String.valueOf(message.getMsgId()),message);
 
+            // 是否为群消息
+            if (message.getFromUserName().contains("@@")) {
+                final Contact groupContact = weChatClient.getContactManager().getGroupContact(message.getFromUserName());
+                final Contact.ContactMember groupMemberUser = groupContact.findGroupMemberUser(message.getSenderUserName());
+                System.out.println(groupContact);
+                logger.info("{} > {} : {}", groupContact.getNickName(), groupMemberUser.getDisplayName(), message.getContent());
+                callMessageEvent(new MessageEvent(messageCache.getIfPresent(String.valueOf(message.getMsgId()))));
+                return;
+            }
             String nickName = Optional.ofNullable(weChatClient.getContactManager().getContactCache().get(message.getFromUserName()))
                             .map(Contact::getNickName)
                                     .orElse("未知");
 
             String toUser = Optional.ofNullable(weChatClient.getContactManager().getContactCache().get(message.getToUserName()))
                             .map(Contact::getNickName).orElse("未知");
-            logger.info("{}>{} : {}", nickName, toUser, message.getContent());
+            logger.info("{} > {} : {}", nickName, toUser, message.getContent());
+
             callMessageEvent(new MessageEvent(messageCache.getIfPresent(String.valueOf(message.getMsgId()))));
         }
     }

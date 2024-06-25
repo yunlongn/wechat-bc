@@ -22,4 +22,7 @@ public class GroupMessageEvent extends ReceiveMessageEvent{
         return contact;
     }
 
+
+
+
 }
