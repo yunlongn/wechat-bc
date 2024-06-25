@@ -17,6 +17,7 @@ import com.meteor.wechatbc.impl.event.sub.ClientDeathEvent;
 import com.meteor.wechatbc.impl.event.sub.MessageEvent;
 import com.meteor.wechatbc.impl.event.sub.OwnerMessageEvent;
 import com.meteor.wechatbc.impl.event.sub.ReceiveMessageEvent;
+import com.meteor.wechatbc.impl.model.MsgType;
 import com.meteor.wechatbc.impl.model.Session;
 import com.meteor.wechatbc.impl.model.message.PayMessage;
 import com.meteor.wechatbc.impl.model.message.VideoMessage;
@@ -88,13 +89,20 @@ public class SyncCheckRunnable {
             weChatClient.getLogger().debug(message.toString());
 
             messageCache.put(String.valueOf(message.getMsgId()),message);
+            if (MsgType.Hit.equals(message.getMsgType())) {
+                String nickName = Optional.ofNullable(weChatClient.getContactManager().getContactCache().get(message.getFromUserName()))
+                        .map(Contact::getNickName)
+                        .orElse("未知");
+                logger.info("{} > {} : 点击", nickName, "");
+                return;
+            }
 
             // 是否为群消息
             if (message.getFromUserName().contains("@@")) {
-                final Contact groupContact = weChatClient.getContactManager().getGroupContact(message.getFromUserName());
-                final Contact.ContactMember groupMemberUser = groupContact.findGroupMemberUser(message.getSenderUserName());
-                System.out.println(groupContact);
-                logger.info("{} > {} : {}", groupContact.getNickName(), groupMemberUser.getDisplayName(), message.getContent());
+                final Contact groupContact = weChatClient.getContactManager().getContactGroupCache().get(message.getFromUserName());
+                String toUser = Optional.ofNullable(groupContact.findGroupMemberUser(message.getSenderUserName()))
+                        .map(Contact.ContactMember::getDisplayName).orElse("系统");
+                logger.info("{} > {} : {}", groupContact.getNickName(), toUser, message.getContent());
                 callMessageEvent(new MessageEvent(messageCache.getIfPresent(String.valueOf(message.getMsgId()))));
                 return;
             }

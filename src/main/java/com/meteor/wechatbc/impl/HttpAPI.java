@@ -44,6 +44,21 @@ public interface HttpAPI {
     JSONObject batchGetContactDetail(List<GetBatchContact> queryContactList);
 
     /**
+     * 踢人
+     */
+    JSONObject delGroupMemberUser(String roomId, String userId);
+
+    /**
+     * 增加群聊用户
+     */
+    JSONObject addGroupMemberUser(String roomId, String userId);
+
+    /**
+     * 修改群聊名字
+     */
+    JSONObject modifyGroupName(String roomId, String newName);
+
+    /**
      * 发送消息
      */
     SentMessage sendMessage(String toUserName, String content);

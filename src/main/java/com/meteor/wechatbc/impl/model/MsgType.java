@@ -11,6 +11,7 @@ public enum MsgType{
     APPMsg("49"), // APP消息
     SysMsg("10000"), // 系统消息
     VoiceMsg("34"), // 语音消息
+    Hit("51"), // 语音消息
 
     RevokeMsg("10002"); // 撤回消息
 

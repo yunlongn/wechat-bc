@@ -102,7 +102,7 @@ public class Message {
      * 如果是群聊消息，该函数返回调用者
      */
     public String getSenderUserName(){
-        if(getFromUserName().startsWith("@@")){
+        if(getFromUserName().startsWith("@@") && content.contains(":")) {
             return content.substring(0,content.indexOf(":"));
         }
         return getFromUserName();

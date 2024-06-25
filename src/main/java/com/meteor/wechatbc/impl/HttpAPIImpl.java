@@ -28,6 +28,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -191,6 +192,76 @@ public class HttpAPIImpl implements HttpAPI {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("Count", count);
         jsonObject.put("List", queryContactList);
+        Request request = BASE_REQUEST.newBuilder().url(httpUrl)
+                .post(RequestBody.create(mediaType, jsonObject.toString()))
+                .build();
+        try (
+                Response response = okHttpClient.newCall(request).execute();
+        ) {
+            String body = response.body().string();
+            return JSON.parseObject(body);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public JSONObject delGroupMemberUser(String roomId, String userId) {
+        HttpUrl httpUrl = URL.BASE_URL.newBuilder()
+                .encodedPath(URL.ROOM_URL)
+                .addQueryParameter("fun", "delmember")
+                .build();
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("DelMemberList", userId);
+        jsonObject.put("ChatRoomName", roomId);
+        Request request = BASE_REQUEST.newBuilder().url(httpUrl)
+                .post(RequestBody.create(mediaType, jsonObject.toString()))
+                .build();
+        try (
+                Response response = okHttpClient.newCall(request).execute();
+        ) {
+            String body = response.body().string();
+            return JSON.parseObject(body);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public JSONObject addGroupMemberUser(String roomId, String userId) {
+        HttpUrl httpUrl = URL.BASE_URL.newBuilder()
+                .encodedPath(URL.ROOM_URL)
+                .addQueryParameter("fun", "addmember")
+                .build();
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("AddMemberList", userId);
+        jsonObject.put("ChatRoomName", roomId);
+        Request request = BASE_REQUEST.newBuilder().url(httpUrl)
+                .post(RequestBody.create(mediaType, jsonObject.toString()))
+                .build();
+        try (
+                Response response = okHttpClient.newCall(request).execute();
+        ) {
+            String body = response.body().string();
+            return JSON.parseObject(body);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public JSONObject modifyGroupName(String roomId, String newName) {
+
+        HttpUrl httpUrl = URL.BASE_URL.newBuilder()
+                .encodedPath(URL.ROOM_URL)
+                .addQueryParameter("fun", "modtopic")
+                .build();
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("NewTopic", newName);
+        jsonObject.put("ChatRoomName", roomId);
         Request request = BASE_REQUEST.newBuilder().url(httpUrl)
                 .post(RequestBody.create(mediaType, jsonObject.toString()))
                 .build();

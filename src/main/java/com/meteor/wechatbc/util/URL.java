@@ -12,7 +12,7 @@ public class URL {
 
     @Setter public static HttpUrl BASE_URL = new HttpUrl.Builder()
             .scheme("https")
-            .host("wx2.qq.com")
+            .host("wx.qq.com")
             .build();
 
 
@@ -43,4 +43,6 @@ public class URL {
     public final static String SEND_VIDEO = "/cgi-bin/mmwebwx-bin/webwxsendvideomsg";
 
     public final static String GET_ICON = "/cgi-bin/mmwebwx-bin/webwxgeticon";
+
+    public final static String ROOM_URL = "/cgi-bin/mmwebwx-bin/webwxupdatechatroom";
 }
