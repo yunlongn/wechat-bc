@@ -1,5 +1,6 @@
 package com.meteor.wechatbc.impl.cookie;
 
+import lombok.Data;
 import lombok.Getter;
 import okhttp3.Cookie;
 
@@ -8,12 +9,33 @@ import java.io.*;
 /**
  * 代理cookie类以实现序列化
  */
+@Data
 public class CookiePack implements Serializable {
+    private static final long serialVersionUID = 293896120431360591L;
 
-    @Getter private Cookie cookie;
+    private String name;
+    private String value;
+    private Long expiresAt;
+    private String domain;
+    private String path;
+    private Boolean secure;
+    private Boolean httpOnly;
+
+    private Boolean persistent;
+    private Boolean hostOnly;
+
 
     public CookiePack(Cookie cookie){
-        this.cookie = cookie;
+
+        this.name = cookie.name();
+        this.value = cookie.value();
+        this.expiresAt = cookie.expiresAt();
+        this.domain = cookie.domain();
+        this.path = cookie.path();
+        this.secure = cookie.secure();
+        this.httpOnly = cookie.httpOnly();
+        this.persistent = cookie.persistent();
+        this.hostOnly = cookie.hostOnly();
     }
 
     /**
@@ -71,38 +93,38 @@ public class CookiePack implements Serializable {
             throw new RuntimeException(e);
         }
     }
+//
+//    private void writeObject(ObjectOutputStream objectOutputStream) throws IOException {
+//        objectOutputStream.writeObject(cookie.name());
+//        objectOutputStream.writeObject(cookie.value());
+//        objectOutputStream.writeLong(cookie.persistent()?cookie.expiresAt():-1);
+//        objectOutputStream.writeObject(cookie.domain());
+//        objectOutputStream.writeObject(cookie.path());
+//        objectOutputStream.writeBoolean(cookie.secure());
+//        objectOutputStream.writeBoolean(cookie.httpOnly());
+//        objectOutputStream.writeBoolean(cookie.hostOnly());
+//    }
 
-    private void writeObject(ObjectOutputStream objectOutputStream) throws IOException {
-        objectOutputStream.writeObject(cookie.name());
-        objectOutputStream.writeObject(cookie.value());
-        objectOutputStream.writeLong(cookie.persistent()?cookie.expiresAt():-1);
-        objectOutputStream.writeObject(cookie.domain());
-        objectOutputStream.writeObject(cookie.path());
-        objectOutputStream.writeBoolean(cookie.secure());
-        objectOutputStream.writeBoolean(cookie.httpOnly());
-        objectOutputStream.writeBoolean(cookie.hostOnly());
-    }
-
-    private void reloadObject(ObjectInputStream objectInputStream) throws IOException, ClassNotFoundException {
-        Cookie.Builder builder = new Cookie.Builder();
-        builder.name((String)objectInputStream.readObject());
-        builder.value((String)objectInputStream.readObject());
-
-        long l = objectInputStream.readLong();
-
-        if(l!=-1) builder.expiresAt(l);
-        String domain = null;
-        builder.domain(domain = (String)objectInputStream.readObject());
-        builder.path((String)objectInputStream.readObject());
-
-        boolean secure = objectInputStream.readBoolean();
-        if(secure) builder.secure();
-        boolean httpOnly = objectInputStream.readBoolean();
-        if(httpOnly) builder.httpOnly();
-        boolean hostOnly = objectInputStream.readBoolean();
-        if(hostOnly) builder.hostOnlyDomain(domain);
-
-        this.cookie = builder.build();
-    }
+//    private void reloadObject(ObjectInputStream objectInputStream) throws IOException, ClassNotFoundException {
+//        Cookie.Builder builder = new Cookie.Builder();
+//        builder.name((String)objectInputStream.readObject());
+//        builder.value((String)objectInputStream.readObject());
+//
+//        long l = objectInputStream.readLong();
+//
+//        if(l!=-1) builder.expiresAt(l);
+//        String domain = null;
+//        builder.domain(domain = (String)objectInputStream.readObject());
+//        builder.path((String)objectInputStream.readObject());
+//
+//        boolean secure = objectInputStream.readBoolean();
+//        if(secure) builder.secure();
+//        boolean httpOnly = objectInputStream.readBoolean();
+//        if(httpOnly) builder.httpOnly();
+//        boolean hostOnly = objectInputStream.readBoolean();
+//        if(hostOnly) builder.hostOnlyDomain(domain);
+//
+//        this.cookie = builder.build();
+//    }
 
 }

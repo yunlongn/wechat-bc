@@ -1,6 +1,7 @@
 package com.meteor.wechatbc;
 
 import com.meteor.wechatbc.impl.WeChatClient;
+import com.meteor.wechatbc.impl.model.Session;
 import com.meteor.wechatbc.launch.login.DefaultPrintQRCodeCallBack;
 import com.meteor.wechatbc.plugin.PluginClassLoader;
 import com.meteor.wechatbc.util.VersionCheck;

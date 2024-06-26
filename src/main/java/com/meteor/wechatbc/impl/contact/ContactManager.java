@@ -59,7 +59,8 @@ public class ContactManager {
 
     private Map<RetrievalType,RetrievalStrategy> retrievalTypeRetrievalStrategyMap;
 
-    @Getter private Map<String,Contact> contactMap;
+    @Getter
+    private Map<String, Contact> contactMap;
 
     public ContactManager(WeChatClient weChatClient){
         this.weChatClient = weChatClient;
@@ -73,6 +74,7 @@ public class ContactManager {
         retrievalTypeRetrievalStrategyMap.put(RetrievalType.REMARK_NAME,new RemarkStrategy(this.contactMap));
 
         this.weChatClient.getLogger().info("联系人列表数量: "+contactMap.size());
+
     }
 
     /**

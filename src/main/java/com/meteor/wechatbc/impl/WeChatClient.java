@@ -7,6 +7,7 @@ import com.meteor.wechatbc.impl.console.Console;
 import com.meteor.wechatbc.impl.contact.ContactManager;
 import com.meteor.wechatbc.impl.event.EventManager;
 import com.meteor.wechatbc.impl.fileupload.FileChunkUploader;
+import com.meteor.wechatbc.impl.model.Session;
 import com.meteor.wechatbc.impl.plugin.PluginManager;
 import com.meteor.wechatbc.impl.scheduler.SchedulerImpl;
 import com.meteor.wechatbc.impl.synccheck.SyncCheckRunnable;
@@ -21,6 +22,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Scanner;
 
 /**
  * 客户端
@@ -56,6 +58,17 @@ public class WeChatClient {
         }
     }
 
+    public boolean initWeChatCore(Session session) {
+        try {
+            this.weChatCore = new WeChatCoreImpl(this,
+                    session);
+            this.weChatCore.getHttpAPI().init();
+            return true;
+        }catch (Exception e){
+            return false;
+        }
+    }
+
     /**
      * 一些必要的目录
      */
@@ -73,7 +86,9 @@ public class WeChatClient {
      * 启动
      */
     public void start(){
-        this.weChatCore.getHttpAPI().initWeChat();
+        if (this.weChatCore.getHttpAPI().initWeChat() != 0) {
+            throw new RuntimeException("初始化微信接口失败");
+        }
         this.syncCheckRunnable = new SyncCheckRunnable(this);
         this.contactManager = new ContactManager(this);
         this.eventManager = new EventManager(this);
@@ -89,6 +104,7 @@ public class WeChatClient {
         Contact user = this.weChatCore.getSession().getWxInitInfo().getUser();
 
         logger = LogManager.getLogger(String.format("%s(%s)",user.getNickName(),user.getUin()));
+
     }
 
     public void initPluginManager(){
@@ -119,6 +135,18 @@ public class WeChatClient {
      * 登录
      */
     public void login(PrintQRCodeCallBack printQRCodeCallBack){
+
+        try {
+            final Session session = Session.loadHotLoginData(new File("hotLogin.dat"));
+            if (session != null) {
+                this.logger = LogManager.getLogger("尝试登录旧的微信... ");
+                this.initWeChatCore(session);
+                this.start();
+                return;
+            }
+        } catch (Exception e) {
+            logger.error("历史微信无法加载。重新扫码登陆... ");
+        }
         String loginUUID = weChatLogin.getLoginUUID();
 
         printQRCodeCallBack.print(loginUUID);

@@ -18,7 +18,7 @@ public interface HttpAPI {
     /**
      * 初始化微信接口
      */
-    void initWeChat();
+    int initWeChat();
 
     /**
      * 检查新消息

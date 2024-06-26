@@ -14,6 +14,9 @@ import java.io.*;
 @Data
 @ToString
 public class Session implements Serializable {
+
+    private static final long serialVersionUID = 293896120431360593L;
+
     @JSONField(name = "BaseRequest")
     BaseRequest baseRequest;
 
@@ -41,6 +44,15 @@ public class Session implements Serializable {
             objectOutputStream.writeObject(this);
             objectOutputStream.flush();
         } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static Session loadHotLoginData(File file){
+        try {
+            ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(file));
+            return (Session) objectInputStream.readObject();
+        } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
