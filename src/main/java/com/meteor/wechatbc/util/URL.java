@@ -12,7 +12,7 @@ public class URL {
 
     @Setter public static HttpUrl BASE_URL = new HttpUrl.Builder()
             .scheme("https")
-            .host("wx.qq.com")
+            .host("wx2.qq.com")
             .build();
 
 
