@@ -1,5 +1,6 @@
 package com.meteor.wechatbc.impl.cookie;
 
+import cn.hutool.cache.impl.LRUCache;
 import okhttp3.Cookie;
 import okhttp3.CookieJar;
 import okhttp3.HttpUrl;
@@ -11,12 +12,12 @@ import java.util.Map;
 public class WeChatCookie implements CookieJar {
 
     // 登陆后初始化的Cookie
-    private List<Cookie> initCookie;
-    private Map<HttpUrl,List<Cookie>> cookieListMap;
+    private final List<Cookie> initCookie;
+    private final LRUCache<HttpUrl,List<Cookie>> cookieListMap;
 
     public WeChatCookie(List<Cookie> initCookie){
         this.initCookie = initCookie;
-        this.cookieListMap = new HashMap<>();
+        this.cookieListMap = new LRUCache<>(300);
     }
 
     @Override
@@ -27,6 +28,6 @@ public class WeChatCookie implements CookieJar {
 
     @Override
     public List<Cookie> loadForRequest(HttpUrl httpUrl) {
-        return cookieListMap.getOrDefault(httpUrl,initCookie);
+        return cookieListMap.get(httpUrl, () -> initCookie);
     }
 }
