@@ -86,14 +86,24 @@ public class SyncCheckRunnable {
             JSONObject messageJson = addMsgList.getJSONObject(i);
             Message message = messageProcessor.processMessage(messageJson);
 
-            weChatClient.getLogger().debug(message.toString());
+            weChatClient.getLogger().debug("handler message {}", () -> JSON.toJSONString(message));
 
             messageCache.put(String.valueOf(message.getMsgId()),message);
             if (MsgType.Hit.equals(message.getMsgType())) {
                 String nickName = Optional.ofNullable(weChatClient.getContactManager().getContactCache().get(message.getFromUserName()))
                         .map(Contact::getNickName)
                         .orElse("未知");
-                logger.info("{} > {} : 点击", nickName, "");
+                String toUserName;
+                if (message.getToUserName().contains("@@")) {
+                    toUserName = Optional.ofNullable(weChatClient.getContactManager().getContactGroupCache().get(message.getToUserName()))
+                            .map(Contact::getNickName)
+                            .orElse("未知");
+                } else {
+                    toUserName = Optional.ofNullable(weChatClient.getContactManager().getContactCache().get(message.getToUserName()))
+                            .map(Contact::getNickName)
+                            .orElse("未知");
+                }
+                logger.info("{} 点击 ({}) ", nickName, toUserName);
                 return;
             }
 

@@ -45,10 +45,10 @@ public class Main{
                 "     \\/  \\/ \\___|\\_____|_| |_|\\__,_|\\__| |____/ \\_____|\n" +
                 "                                                       \n" +
                 "                                                       \n");
-        System.out.println("开源仓库: https://github.com/meteorOSS/WeChatBc");
+//        System.out.println("开源仓库: https://github.com/meteorOSS/WeChatBc");
         System.out.println("如果对你有帮助的话，请帮忙点个Star哦");
         VersionCheck.check("meteorOSS","wechat-bc");
-        System.out.println("wechatbc 交流群: 653440235");
+//        System.out.println("wechatbc 交流群: 653440235");
     }
 
     public int start(){
