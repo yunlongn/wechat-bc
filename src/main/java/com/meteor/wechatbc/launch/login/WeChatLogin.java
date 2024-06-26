@@ -129,6 +129,7 @@ public class WeChatLogin {
                     .host(baseDomain)
                     .build());
 
+            baseRequest.setBaseDomain(baseDomain);
             for (Cookie cookie : cookies) {
                 String name = cookie.name();
                 if (name.startsWith("webwx_data_ticket")) {

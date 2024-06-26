@@ -14,9 +14,11 @@ import com.meteor.wechatbc.impl.synccheck.SyncCheckRunnable;
 import com.meteor.wechatbc.launch.login.PrintQRCodeCallBack;
 import com.meteor.wechatbc.launch.login.WeChatLogin;
 import com.meteor.wechatbc.scheduler.Scheduler;
+import com.meteor.wechatbc.util.URL;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import okhttp3.HttpUrl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -137,9 +139,14 @@ public class WeChatClient {
     public void login(PrintQRCodeCallBack printQRCodeCallBack){
 
         try {
+            this.logger = LogManager.getLogger("尝试登录旧的微信... ");
             final Session session = Session.loadHotLoginData(new File("hotLogin.dat"));
             if (session != null) {
-                this.logger = LogManager.getLogger("尝试登录旧的微信... ");
+                // 获取cookie的 domain 所属域名
+                URL.setBASE_URL(new HttpUrl.Builder()
+                        .scheme("https")
+                        .host(session.getBaseRequest().getBaseDomain())
+                        .build());
                 this.initWeChatCore(session);
                 this.start();
                 return;
