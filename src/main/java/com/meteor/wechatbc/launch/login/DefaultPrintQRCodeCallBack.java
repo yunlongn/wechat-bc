@@ -4,10 +4,15 @@ import cn.hutool.core.io.IoUtil;
 import cn.hutool.extra.qrcode.QrCodeUtil;
 import cn.hutool.extra.qrcode.QrConfig;
 import cn.hutool.http.HttpUtil;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.datamatrix.encoder.SymbolShapeHint;
 import com.meteor.wechatbc.launch.login.PrintQRCodeCallBack;
 import com.meteor.wechatbc.util.VersionCheck;
 
 import java.awt.*;
+import java.nio.charset.StandardCharsets;
 
 public class DefaultPrintQRCodeCallBack implements PrintQRCodeCallBack {
     @Override
@@ -17,11 +22,30 @@ public class DefaultPrintQRCodeCallBack implements PrintQRCodeCallBack {
         QrConfig qrConfig = QrConfig.create()
                 .setForeColor(Color.WHITE)
                 .setBackColor(Color.BLACK)
-                .setWidth(0)
-                .setHeight(0).setMargin(1);
+                .setCharset(StandardCharsets.UTF_8)
+                .setShapeHint(SymbolShapeHint.FORCE_SQUARE)
+                .setWidth(5)
+                .setHeight(5)
+                .setMargin(1);
+        final BitMatrix bitMatrix = QrCodeUtil.encode(decode, qrConfig);
+        for (int j = 0; j < bitMatrix.getHeight(); j++) {
+            for (int i = 0; i < bitMatrix.getWidth(); i++) {
+                if (bitMatrix.get(i, j)) {
+                    System.out.print("■");
+                } else {
+                    System.out.print("  ");
+                }
+
+            }
+            System.out.println();
+        }
+        System.out.println();
+        System.out.println();
+
         String asciiArt = QrCodeUtil.generateAsAsciiArt(decode,qrConfig);
         System.out.println(asciiArt);
-        System.out.println("请扫码登录!");
+
+        System.out.println("请扫码登录! " + url);
 
         return null;
     }
